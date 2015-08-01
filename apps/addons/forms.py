@@ -411,7 +411,7 @@ class AddonForm(happyforms.ModelForm):
         fields = ('name', 'homepage', 'default_locale', 'support_email',
                   'support_url', 'description', 'summary',
                   'developer_comments', 'eula', 'privacy_policy', 'the_reason',
-                  'the_future', 'view_source', 'prerelease', 'site_specific',)
+                  'the_future', 'view_source', 'site_specific',)
 
         exclude = ('status', )
 

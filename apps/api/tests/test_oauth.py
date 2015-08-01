@@ -344,7 +344,6 @@ class TestAddon(BaseOAuth):
                                 the_reason='for shits',
                                 the_future='is gone',
                                 view_source=1,
-                                prerelease=1,
                                 binary=False,
                                 site_specific=1)
 

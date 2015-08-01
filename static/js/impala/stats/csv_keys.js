@@ -62,8 +62,6 @@ var csv_keys = {
         'dp-dl-othersby'        : gettext('Others By Author'),
         'dp-hc-dependencies'    : gettext('Dependencies'),
         'dp-dl-dependencies'    : gettext('Dependencies'),
-        'dp-hc-upsell'          : gettext('Upsell'),
-        'dp-dl-upsell'          : gettext('Upsell'),
 
         'sharingapi'            : gettext('Sharing'),
         'category'              : gettext('Category Pages'),

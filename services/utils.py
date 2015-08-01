@@ -19,20 +19,17 @@ from cef import log_cef as _log_cef
 import MySQLdb as mysql
 import sqlalchemy.pool as pool
 
-import commonware.log
-
 from django.utils import importlib
 settings = importlib.import_module(settingmodule)
 
-from lib.log_settings_base import formatters, handlers, loggers
+from lib.log_settings_base import formatters, handlers
 
 # Ugh. But this avoids any zamboni or django imports at all.
 # Perhaps we can import these without any problems and we can
 # remove all this.
 from constants.applications import APPS_ALL
 from constants.platforms import PLATFORMS
-from constants.base import (ADDON_PREMIUM, STATUS_PUBLIC, STATUS_DISABLED,
-                            STATUS_BETA, STATUS_LITE,
+from constants.base import (STATUS_PUBLIC, STATUS_DISABLED, STATUS_LITE,
                             STATUS_LITE_AND_NOMINATED)
 
 
@@ -92,8 +89,8 @@ version_re = re.compile(r"""(?P<major>\d+)         # major (x in x.y)
                             (?P<alpha_ver>\d*)     # alpha/beta version
                             (?P<pre>pre)?          # pre release
                             (?P<pre_ver>\d)?       # pre release version
-                          """,
-                          re.VERBOSE)
+                        """,
+                        re.VERBOSE)
 
 
 def get_mirror(status, id, row):

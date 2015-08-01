@@ -32,8 +32,8 @@ class AddonAdmin(admin.ModelAdmin):
         }),
         ('Truthiness', {
             'fields': ('disabled_by_user', 'trusted', 'view_source',
-                       'public_stats', 'prerelease', 'admin_review',
-                       'site_specific', 'external_software', 'dev_agreement'),
+                       'public_stats', 'admin_review', 'site_specific',
+                       'external_software', 'dev_agreement'),
         }),
         ('Money', {
             'fields': ('wants_contributions', 'paypal_id', 'suggested_amount',

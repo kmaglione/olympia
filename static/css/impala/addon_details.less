@@ -146,24 +146,9 @@ h1.addon,
         border-color: #e2dbbf;
         .box-shadow(0 -1px 0 #F7F0D5 inset, 0 1px 0 rgba(0, 0, 0, 0.05));
     }
-    &.upsell,
     &.dependencies {
         > h3 {
             margin: 0 0 .5em;
-        }
-    }
-    &.upsell {
-        min-height: 64px;
-        position: relative;
-
-        > .premium {
-            position: absolute;
-            top: 14px;
-            right: 7px;
-
-            h3 {
-                font: bold 13px/16px @sans-stack;
-            }
         }
     }
     &.dependencies {
@@ -189,12 +174,6 @@ h1.addon,
     }
     &.performance-note {
         background-position: 96% 16px;
-    }
-    &.upsell {
-        .premium {
-            right: auto;
-            left: 21px;
-        }
     }
 }
 
@@ -544,14 +523,6 @@ span.featured {
 
 /* Paypal Modal */
 .paypal-modal {
-    .price-wrapper {
-        float: right;
-    }
-    .price {
-        color: #D4904D;
-        font-weight: bold;
-        float: right;
-    }
     .paypal-links {
         font-size: 0.8em;
         margin-bottom: 1em;

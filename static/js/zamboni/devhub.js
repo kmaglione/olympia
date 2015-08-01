@@ -841,9 +841,6 @@ function initPayments(delegate) {
             $(".thankyou-note").hide();
         }
     }).change();
-    $delegate.find('#id_text, #id_free').focus(function(e) {
-        $delegate.find('#id_do_upsell_1').attr('checked', true);
-    });
 }
 
 function initCatFields(delegate) {

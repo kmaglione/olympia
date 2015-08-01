@@ -23,16 +23,14 @@ from amo import set_user
 from amo.helpers import absolutify, user_media_url
 from amo.signals import _connect, _disconnect
 from addons.models import (Addon, AddonCategory, AddonDependency,
-                           AddonDeviceType, AddonRecommendation,
-                           AddonUser, AppSupport, BlacklistedGuid,
-                           BlacklistedSlug, Category, Charity, CompatOverride,
-                           CompatOverrideRange, FrozenAddon,
-                           IncompatibleVersions, Persona, Preview)
+                           AddonRecommendation, AddonUser, AppSupport,
+                           BlacklistedGuid, BlacklistedSlug, Category,
+                           Charity, CompatOverride, CompatOverrideRange,
+                           FrozenAddon, IncompatibleVersions, Persona,
+                           Preview)
 from applications.models import AppVersion
 from bandwagon.models import Collection
-from constants.applications import DEVICE_TYPES
 from devhub.models import ActivityLog, AddonLog, RssKey, SubmitStep
-from editors.models import EscalationQueue
 from files.models import File
 from files.tests.test_models import UploadTest
 from reviews.models import Review, ReviewFlag
@@ -1570,8 +1568,6 @@ class TestAddonDelete(amo.tests.TestCase):
             category=Category.objects.create(type=amo.ADDON_EXTENSION))
         AddonDependency.objects.create(
             addon=addon, dependent_addon=addon)
-        AddonDeviceType.objects.create(
-            addon=addon, device_type=DEVICE_TYPES.keys()[0])
         AddonRecommendation.objects.create(
             addon=addon, other_addon=addon, score=0)
         AddonUser.objects.create(
@@ -2654,12 +2650,3 @@ class TestIncompatibleVersions(amo.tests.TestCase):
 
         version2.delete()
         eq_(IncompatibleVersions.objects.count(), 0)
-
-
-class TestQueue(amo.tests.TestCase):
-
-    def test_in_queue(self):
-        addon = Addon.objects.create(guid='f', type=amo.ADDON_EXTENSION)
-        assert not addon.in_escalation_queue()
-        EscalationQueue.objects.create(addon=addon)
-        assert addon.in_escalation_queue()

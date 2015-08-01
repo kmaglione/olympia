@@ -842,9 +842,6 @@ button:active,
     color: #fff;
 }
 /* We're getting rid of orange install buttons someday. Today's not that day. */
-.button.premium {
-    background: #da6;
-}
 .button.negative {
     background-color: #84C63C;
     color: #fff;

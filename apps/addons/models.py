@@ -280,10 +280,7 @@ class Addon(amo.models.OnChangeMixin, amo.models.ModelBase):
     trusted = models.BooleanField(default=False)
     view_source = models.BooleanField(default=True, db_column='viewsource')
     public_stats = models.BooleanField(default=False, db_column='publicstats')
-    prerelease = models.BooleanField(default=False)
     admin_review = models.BooleanField(default=False, db_column='adminreview')
-    admin_review_type = models.PositiveIntegerField(
-        choices=amo.ADMIN_REVIEW_TYPES.items(), default=amo.ADMIN_REVIEW_FULL)
     site_specific = models.BooleanField(default=False,
                                         db_column='sitespecific')
     external_software = models.BooleanField(default=False,
@@ -294,8 +291,6 @@ class Addon(amo.models.OnChangeMixin, amo.models.ModelBase):
         default=True, help_text='Automatically upgrade jetpack add-on to a '
                                 'new sdk version?')
 
-    nomination_message = models.TextField(null=True,
-                                          db_column='nominationmessage')
     target_locale = models.CharField(
         max_length=255, db_index=True, blank=True, null=True,
         help_text="For dictionaries and language packs")
@@ -331,11 +326,6 @@ class Addon(amo.models.OnChangeMixin, amo.models.ModelBase):
     dependencies = models.ManyToManyField('self', symmetrical=False,
                                           through='AddonDependency',
                                           related_name='addons')
-    premium_type = models.PositiveIntegerField(
-        choices=amo.ADDON_PREMIUM_TYPES.items(), default=amo.ADDON_FREE)
-    manifest_url = models.URLField(max_length=255, blank=True, null=True)
-    app_domain = models.CharField(max_length=255, blank=True, null=True,
-                                  db_index=True)
 
     _current_version = models.ForeignKey(Version, db_column='current_version',
                                          related_name='+', null=True,
@@ -343,18 +333,9 @@ class Addon(amo.models.OnChangeMixin, amo.models.ModelBase):
     _latest_version = models.ForeignKey(Version, db_column='latest_version',
                                         on_delete=models.SET_NULL,
                                         null=True, related_name='+')
-    make_public = models.DateTimeField(null=True)
-    mozilla_contact = models.EmailField(blank=True)
-
-    vip_app = models.BooleanField(default=False)
-
-    # Whether the app is packaged or not (aka hosted).
-    is_packaged = models.BooleanField(default=False, db_index=True)
 
     # This gets overwritten in the transformer.
     share_counts = collections.defaultdict(int)
-
-    enable_new_regions = models.BooleanField(default=False, db_index=True)
 
     whiteboard = models.TextField(blank=True)
 
@@ -381,16 +362,6 @@ class Addon(amo.models.OnChangeMixin, amo.models.ModelBase):
 
     class Meta:
         db_table = 'addons'
-
-    @staticmethod
-    def __new__(cls, *args, **kw):
-        try:
-            type_idx = Addon._meta._type_idx
-        except AttributeError:
-            type_idx = (idx for idx, f in enumerate(Addon._meta.fields)
-                        if f.attname == 'type').next()
-            Addon._meta._type_idx = type_idx
-        return object.__new__(cls)
 
     def __unicode__(self):
         return u'%s: %s' % (self.id, self.name)
@@ -493,7 +464,7 @@ class Addon(amo.models.OnChangeMixin, amo.models.ModelBase):
             self._reviews.all().delete()
             # The last parameter is needed to automagically create an AddonLog.
             amo.log(amo.LOG.DELETE_ADDON, self.pk, unicode(self.guid), self)
-            self.update(status=amo.STATUS_DELETED, slug=None, app_domain=None,
+            self.update(status=amo.STATUS_DELETED, slug=None,
                         _current_version=None, guid=None)
             models.signals.post_delete.send(sender=Addon, instance=self)
 
@@ -511,8 +482,8 @@ class Addon(amo.models.OnChangeMixin, amo.models.ModelBase):
         return True
 
     @classmethod
-    def from_upload(cls, upload, platforms, is_packaged=False, source=None,
-                    is_listed=True, data=None):
+    def from_upload(cls, upload, platforms, source=None, is_listed=True,
+                    data=None):
         from files.utils import parse_addon
 
         if not data:
@@ -1428,11 +1399,8 @@ class Addon(amo.models.OnChangeMixin, amo.models.ModelBase):
                 pass
         return ''
 
-    def get_mozilla_contacts(self):
-        return [x.strip() for x in self.mozilla_contact.split(',')]
-
     def can_review(self, user):
-        return not(user and self.has_author(user))
+        return not (user and self.has_author(user))
 
     @property
     def all_dependencies(self):
@@ -1452,9 +1420,6 @@ class Addon(amo.models.OnChangeMixin, amo.models.ModelBase):
             res = cur.files.order_by('-created')
             if res:
                 return res[0]
-
-    def in_escalation_queue(self):
-        return self.escalationqueue_set.exists()
 
     def update_names(self, new_names):
         """
@@ -1544,24 +1509,6 @@ class Addon(amo.models.OnChangeMixin, amo.models.ModelBase):
 
 dbsignals.pre_save.connect(save_signal, sender=Addon,
                            dispatch_uid='addon_translations')
-
-
-class AddonDeviceType(amo.models.ModelBase):
-    addon = models.ForeignKey(Addon, db_constraint=False)
-    device_type = models.PositiveIntegerField(
-        default=amo.DEVICE_DESKTOP, choices=do_dictsort(amo.DEVICE_TYPES),
-        db_index=True)
-
-    class Meta:
-        db_table = 'addons_devicetypes'
-        unique_together = ('addon', 'device_type')
-
-    def __unicode__(self):
-        return u'%s: %s' % (self.addon.name, self.device.name)
-
-    @property
-    def device(self):
-        return amo.DEVICE_TYPES[self.device_type]
 
 
 @receiver(signals.version_changed, dispatch_uid='version_changed')
@@ -2167,15 +2114,6 @@ def freezer(sender, instance, **kw):
     # Adjust the hotness of the FrozenAddon.
     if instance.addon_id:
         Addon.objects.get(id=instance.addon_id).update(hotness=0)
-
-
-class AddonUpsell(amo.models.ModelBase):
-    free = models.ForeignKey(Addon, related_name='_upsell_from')
-    premium = models.ForeignKey(Addon, related_name='_upsell_to')
-
-    class Meta:
-        db_table = 'addon_upsell'
-        unique_together = ('free', 'premium')
 
 
 class CompatOverride(amo.models.ModelBase):

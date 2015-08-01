@@ -3,24 +3,11 @@ var purchases = {
         $("#contribute-why").popup("#contribute-more-info", {
             pointTo: "#contribute-more-info"
         });
-        $('.price-wrapper a').live('click', _pd(function(event) {
-            /* Update the currency from the drop down. */
-            var $w = $('.price-wrapper');
-            $(this).hide().next().show();
-            $w.find('select').live('change', _pd(function(event) {
-                $w.find('.price').text(
-                    $w.find('option:selected').attr('data-display')
-                );
-            }));
-        }));
         $('button.paypal').live('click', function(event) {
             var el = this,
                 classes = 'ajax-loading loading-submit disabled',
                 url = $(el).closest('form').attr('action'),
                 data = { result_type: 'json' };
-            if ($('.price-wrapper option:selected').length) {
-                data.currency = $('.price-wrapper option:selected').val();
-            }
             if ($(el).attr('data-realurl')) {
                 data.realurl = encodeURIComponent($(el).attr('data-realurl'));
             }
@@ -125,12 +112,6 @@ var purchases = {
         /* This resets the button for this add-on to show that it's been
          * purchased and do the work for add-ons or web apps. */
         var $install = $button.closest('.install');
-        /* Only do something if it's premium. */
-        if ($install.hasClass('premium')) {
-            $install.removeClass('premium');
-            $button.removeClass('premium');
-            $install.installButton();
-        }
     },
     find_button: function($body) {
         /* Find the relevant button to reset. */
@@ -151,21 +132,7 @@ var purchases = {
         if ($('.trigger_download', modal).exists()) {
             z.installAddon($('.addon-title', modal).text(),
                            $('.trigger_download', modal).attr('href'));
-        } else if ($('.trigger_app_install', modal).exists()) {
-            var dest = $('.trigger_app_install', modal).attr('data-manifest-url'),
-                receipt = $('.trigger_app_install', modal).attr('data-receipt');
-            purchases.install_app(dest, receipt);
-            $('.trigger_app_install', modal).click(_pd(function() {
-                purchases.install_app(dest, $(this).attr('data-receipt'));
-            }));
         }
-    },
-    install_app: function(url, receipt) {
-        var data = {};
-        if(receipt) {
-            data.receipt = receipt;
-        }
-        apps.install(url, {data: data});
     }
 };
 

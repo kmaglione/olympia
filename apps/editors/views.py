@@ -729,8 +729,6 @@ def reviewlog(request):
         amo.LOG.APPROVE_VERSION.id: _('was approved'),
         amo.LOG.PRELIMINARY_VERSION.id: _('given preliminary review'),
         amo.LOG.REJECT_VERSION.id: _('rejected'),
-        amo.LOG.ESCALATE_VERSION.id: _(
-            'escalated', 'editors_review_history_nominated_adminreview'),
         amo.LOG.REQUEST_INFORMATION.id: _('needs more information'),
         amo.LOG.REQUEST_SUPER_REVIEW.id: _('needs super review'),
         amo.LOG.COMMENT_VERSION.id: _('commented'),
