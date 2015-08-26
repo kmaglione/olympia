@@ -1,6 +1,7 @@
 worker: &worker
   build: .
-  command: -- celery worker --app=olympia
+  command: celery -A olympia worker
+  dockerfile: Dockerfile.dev
   entrypoint: ./scripts/start-docker.sh
   volumes:
     - .:/code
@@ -15,8 +16,6 @@ worker: &worker
     - MEMCACHE_LOCATION=memcached:11211
     - ELASTICSEARCH_LOCATION=elasticsearch:9200
     - REDIS_LOCATION=redis:6379
-    - MYSQL_ROOT_PASSWORD='docker'
-    - MYSQL_DATABASE='olympia'
     - PYTHONDONTWRITEBYTECODE=1
     - BROKER_URL=amqp://olympia:olympia@rabbitmq/olympia
 
@@ -43,8 +42,6 @@ redis:
 
 rabbitmq:
   image: rabbitmq
-  hostname: olympia
-  name: olympia
   expose:
     - "5672:5672"
   environment:

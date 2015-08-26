@@ -1,0 +1,39 @@
+*.egg
+.*
+cache
+dist
+node_modules
+site-static
+src
+tmp
+user-media
+venv
+__pycache__
+
+# From .gitignore
+*.py[co]
+.*.sw?
+.coverage
+pip-log.txt
+docs/_gh-pages
+docs/api/_build
+lib/product_json/.gitignore
+lib/product_json/*.json
+lib/product_json/.last_update
+lib/product_json/regions/*.json
+lib/product_json/regions/.last_update
+media/external/*
+.idea
+*.js.tmp
+*.css.tmp
+*-min.css
+*-all.css
+*-min.js
+*-all.js
+*.less.css
+*.styl.css
+
+# The above are things we want to explicitly ignore.
+# The below ignore everything, and just send requirements,
+# since our current config uses a mounted volume rather than
+# in-image code.

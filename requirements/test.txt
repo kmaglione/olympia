@@ -1,4 +1,3 @@
---no-binary Pillow
 -r prod.txt
 
 execnet==1.2
