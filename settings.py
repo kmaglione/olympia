@@ -44,8 +44,11 @@ SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_DOMAIN = None
 
 # Disables custom routing in settings.py so that tasks actually run.
-CELERY_ALWAYS_EAGER = True
 CELERY_ROUTES = {}
+
+# Disable Celery queueing unless we have a broker URL environment variable.
+if 'BROKER_URL' not in os.environ:
+    CELERY_ALWAYS_EAGER = True
 
 # If you want to allow self-reviews for add-ons/apps, then enable this.
 # In production we do not want to allow this.

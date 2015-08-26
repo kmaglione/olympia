@@ -1,5 +1,5 @@
 --no-index
---find-links https://pyrepo.addons.mozilla.org/
---find-links https://pyrepo.addons.mozilla.org/wheelhouse/
-
+--find-links ./wheels
+--find-links pyrepo.html
+--find-links wheelhouse.html
 -r dev.txt

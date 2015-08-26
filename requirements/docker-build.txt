@@ -1,0 +1,15 @@
+# A separate requirements for the build portion of the
+# base docker file. We need --no-binary flags here, so
+# we can be sure certain packages will build new wheels,
+# but we need to avoid adding them to a post-base-image
+# build, so those binary wheels are actually installed.
+
+# This file can be done away with once we decide which binary wheels we can
+# safely host in our wheelhouse, and how to deploy binary packages to production
+# in their absence.
+--no-binary m2crypto
+--no-binary Pillow
+--no-binary sasl
+--no-binary MySQL-python
+
+-r docker.txt

@@ -1,0 +1,16 @@
+FROM kmaglione/olympia-base:latest
+
+# Copy down requirements again, in case they've been changed in the
+# developer's repo.
+COPY requirements /pip/requirements/
+
+# Install Python dependencies via the `pip_install` script, preferably using
+# the cached wheels built by the base image's Dockerfile.
+#
+# The cached wheels will no longer be necessary at this point, but don't
+# bother removing them, since they're stored in our base image, and we
+# won't actually save anything by removing them.
+RUN \
+    cd /pip && \
+    sh pip_install.sh install -r requirements/docker.txt && \
+    rm -rf build cache/http
